@@ -6,6 +6,7 @@ params=""
 src=""
 dst=""
 
+# collect params, src and dst
 for arg in $@; do
   if [ "$(echo $arg | cut -c1-1)" = "-" ]; then
   	params="$params $arg"
@@ -19,27 +20,24 @@ for arg in $@; do
   fi
 done
 
-get_size() {
-	du -s $1 | cut -f1
-}
-
 show_progress() {
 	if [ ! -e "$src" ]; then
 		return
 	fi
 
-	local src_size=$(get_size $src)
+	local src_size=$(du -s $src | cut -f1)
 	while :
 	do
 		if [ -e "$dst" ]; then
 			local beg=$(date +%s)
-			local dst_size=$(get_size $dst)
+			local dst_size=$(du -s $dst | cut -f1)
 			local end=$(date +%s)
-			local delay=$((1 + end - beg))
-			local progress=$((((1 + dst_size) * 100) / (1 + src_size)))
 
-			printf "\r%d%%" $progress
-			sleep $delay
+			# show progress in %
+			printf "\r%d%%" $((((1 + dst_size) * 100) / (1 + src_size)))
+
+			# wait at least as long as the `du` command took
+			sleep $((1 + end - beg))
 		else
 			sleep 1
 		fi
