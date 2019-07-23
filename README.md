@@ -1,2 +1,3 @@
-# shell_copy_progress
-A simple wrapper around the cp command to show the progress.
+# Copy with Progress
+
+A simple wrapper around the UNIX `cp` command to show the copy progress in percent.
